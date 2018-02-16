@@ -22,6 +22,14 @@ class StateStore {
 
 let todoId = 0;
 
+function todoTitleReducer() {
+
+}
+
+function todosReducer() {
+
+}
+
 function appReducer(state, action) {
     switch(action.type) {
         case 'SET_NEW_TODO_TITLE_VALUE':
