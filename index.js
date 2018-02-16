@@ -22,44 +22,70 @@ class StateStore {
 
 let todoId = 0;
 
-function todoTitleReducer() {
+function combineReducers(reducers) {
+    return function (state, action) {
+        let newState = state;
 
-}
+        for (let key in reducers) {
+            const stateChunk = state[key];
+            const reducer = reducers[key];
 
-function todosReducer() {
-
-}
-
-function appReducer(state, action) {
-    switch(action.type) {
-        case 'SET_NEW_TODO_TITLE_VALUE':
-            return Object.assign({}, state, {
-                newTodoTitle: action.payload
-            });
-
-        case 'ADD_TODO':
-            return Object.assign({}, state, {
-               todos: state.todos.concat([ 
-                   Object.assign({
-                       id: todoId++
-                   },
-                   action.payload
-                    )
-                ]) 
-            });
+            const newStateChunk = reducer(stateChunk, action);
         
-        case 'COMPLETE_TODO': 
-            return Object.assign({}, state, {
-                todos: state.todos.map(todo => {
-                    if (action.payload == todo.id) {
-                        todo.done = true;
-                    }
+            if (newStateChunk !== stateChunk) {
+                newState = Object.assign({}, state);
+                newState[key] = newStateChunk;
+            }
+        
+        }
 
-                    return todo;
-                })
-            });
+        return newState;
     }
 }
+
+const appReducer = combineReducers({
+    todos: todosReducer,
+    newTodoTitle: todoTitleReducer,
+});
+
+
+
+function todoTitleReducer(state, action) {
+    switch (action.type) {
+        case 'SET_NEW_TODO_TITLE_VALUE':
+            return action.payload;
+    
+         default: return state;
+    
+        }   
+}
+
+function todosReducer(state, action) {
+    switch (action.type) {
+        case 'ADD_TODO':
+            return state.concat([
+                createNewTodo(todoId++, action.payload)
+            ]);
+        case 'COMPLETE_TODO': 
+            return state.todos.map(todo => {
+                if (action.payload == todo.id) {
+                    todo.done = true;
+                }
+
+                return todo;
+            });
+
+        default: return state;
+
+    }
+
+}
+
+function createNewTodo(id, todoData) {
+    return Object.assign({ id }, todoData);
+
+}
+
 
 const stateStore = new StateStore({
     todos: [],
