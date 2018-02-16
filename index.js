@@ -67,7 +67,7 @@ function todosReducer(state, action) {
                 createNewTodo(todoId++, action.payload)
             ]);
         case 'COMPLETE_TODO': 
-            return state.todos.map(todo => {
+            return state.map(todo => {
                 if (action.payload == todo.id) {
                     todo.done = true;
                 }
@@ -151,7 +151,6 @@ document.body.addEventListener('keypress', e => {
 });
 
 document.body.addEventListener('click', e => {
-    console.log(e.target);
     if (e.target.classList.contains('todo-item')) {
         stateStore.dispatch({
             type: 'COMPLETE_TODO',
