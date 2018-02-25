@@ -1,1 +1,1 @@
-# redux-workshop
+# redux-workshop RSSchool
